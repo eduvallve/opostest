@@ -1,5 +1,4 @@
 const express = require('express');
-const fs = require('fs');
 const path = require('path');
 const { marked } = require('marked');
 const supabase = require('./db');
@@ -10,20 +9,17 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Configuració de camins estàtics resolts (compatibilitat local i serverless)
-const publicDir = fs.existsSync(path.join(process.cwd(), 'public'))
-  ? path.join(process.cwd(), 'public')
-  : path.join(__dirname, 'public');
+// Camins resolts: __dirname d'app.js és sempre l'arrel del projecte
+// tant en local com a Vercel (/var/task)
+const appRoot = __dirname;
+const publicDir = path.join(appRoot, 'public');
+const viewsDir = path.join(appRoot, 'views');
 
 app.use(express.static(publicDir));
 app.use('/css', express.static(path.join(publicDir, 'css')));
 app.use('/js', express.static(path.join(publicDir, 'js')));
 
-// Motor de plantilles EJS amb camins resolts
-const viewsDir = fs.existsSync(path.join(process.cwd(), 'views'))
-  ? path.join(process.cwd(), 'views')
-  : path.join(__dirname, 'views');
-
+// Motor de plantilles EJS
 app.set('views', viewsDir);
 app.set('view engine', 'ejs');
 
