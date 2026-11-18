@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banc Global de Preguntes - OposTest</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../../organisms/header') %>
+
+  <main class="main-container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title">Banc Global de Preguntes Test</h1>
+        <p class="page-header__subtitle">
+          Gestiona les preguntes i les seves relacions transversals (Molts a Molts - N:M) entre cursos i lliçons.
+        </p>
+      </div>
+      <div>
+        <a href="/questions/new" class="btn btn--primary btn--lg">
+          + Nova Pregunta
+        </a>
+      </div>
+    </div>
+
+    <!-- Filtres de Cerca -->
+    <div class="card" style="margin-bottom: 1.5rem; padding: 1.25rem;">
+      <form action="/questions" method="GET" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: flex-end;">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="filter-search">Cerca per Text</label>
+          <input type="text" id="filter-search" name="search" value="<%= search %>" placeholder="Paraula clau a l'enunciat..." class="input-text" />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="filter-course">Filtrar per Curs</label>
+          <select id="filter-course" name="course_id" class="input-select">
+            <option value="">-- Tots els cursos --</option>
+            <% (courses || []).forEach(c => { %>
+              <option value="<%= c.id %>" <%= String(course_id) === String(c.id) ? 'selected' : '' %>>
+                <%= c.title %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="filter-difficulty">Dificultat</label>
+          <select id="filter-difficulty" name="difficulty" class="input-select">
+            <option value="">-- Totes les dificultats --</option>
+            <option value="facil" <%= difficulty === 'facil' ? 'selected' : '' %>>Fàcil</option>
+            <option value="mitjana" <%= difficulty === 'mitjana' ? 'selected' : '' %>>Mitjana</option>
+            <option value="dificil" <%= difficulty === 'dificil' ? 'selected' : '' %>>Difícil</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="submit" class="btn btn--primary" style="flex: 1;">
+            Filtrar
+          </button>
+          <a href="/questions" class="btn btn--secondary">
+            Netejar
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Taula de Preguntes -->
+    <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-weight: 600; color: #475569;">Total: <%= questions.length %> preguntes trobades</span>
+    </div>
+
+    <%- include('../../organisms/questions-table', { questions }) %>
+  </main>
+
+  <%- include('../../organisms/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<form action="/lesson/<%= lessonId %>/questions/attach" method="POST" style="display: flex; gap: 0.5rem; align-items: flex-end; flex-wrap: wrap;">
+  <div class="form-group" style="flex: 1; min-width: 250px; margin-bottom: 0;">
+    <label for="quick-attach-select" style="font-size: 0.85rem; font-weight: 600; color: #475569;">Vincular Pregunta Existent (Quick Attach)</label>
+    <select id="quick-attach-select" name="question_id" class="input-select" required>
+      <option value="">-- Selecciona una pregunta del banc --</option>
+      <% availableQuestions.forEach(q => { %>
+        <option value="<%= q.id %>">
+          [#<%= q.id %>] <%= q.question_text.length > 80 ? q.question_text.substring(0, 80) + '...' : q.question_text %> (<%= q.difficulty %>)
+        </option>
+      <% }) %>
+    </select>
+  </div>
+  <button type="submit" class="btn btn--secondary btn--sm" style="white-space: nowrap; height: 38px;">
+    + Vincular a la Lliçó
+  </button>
+</form>

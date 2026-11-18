@@ -1,0 +1,7 @@
+<button 
+  type="<%= typeof type !== 'undefined' ? type : 'button' %>" 
+  class="btn <%= typeof btnClass !== 'undefined' ? btnClass : 'btn--primary' %>"
+  <% if (typeof id !== 'undefined') { %>id="<%= id %>"<% } %>
+  <% if (typeof disabled !== 'undefined' && disabled) { %>disabled<% } %>>
+  <%- text %>
+</button>

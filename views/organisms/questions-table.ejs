@@ -1,0 +1,70 @@
+<div class="table-container">
+  <table class="table-questions">
+    <thead>
+      <tr>
+        <th style="width: 60px;">ID</th>
+        <th>Enunciat i Lliçons Associades</th>
+        <th style="width: 110px;">Dificultat</th>
+        <th style="width: 90px;">Correcta</th>
+        <th style="width: 150px; text-align: right;">Accions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (!questions || questions.length === 0) { %>
+        <tr>
+          <td colspan="5" style="text-align: center; color: #64748b; padding: 2rem;">
+            No s'han trobat preguntes amb els filtres aplicats.
+          </td>
+        </tr>
+      <% } else { %>
+        <% questions.forEach(q => { %>
+          <tr>
+            <td><strong>#<%= q.id %></strong></td>
+            <td>
+              <div style="font-weight: 600; margin-bottom: 0.35rem; color: #0f172a;">
+                <%= q.question_text %>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                <% const lqs = q.lesson_questions || []; %>
+                <% if (lqs.length === 0) { %>
+                  <span class="badge badge--neutral" style="font-size: 0.7rem;">Sense assignar</span>
+                <% } else { %>
+                  <% lqs.forEach(lq => { %>
+                    <% if (lq.lessons) { %>
+                      <span class="badge badge--primary" style="font-size: 0.7rem;" title="<%= lq.lessons.courses ? lq.lessons.courses.title : '' %>">
+                        <%= lq.lessons.courses ? lq.lessons.courses.title + ' > ' : '' %><%= lq.lessons.title %>
+                      </span>
+                    <% } %>
+                  <% }) %>
+                <% } %>
+              </div>
+            </td>
+            <td>
+              <% let diffClass = 'badge--neutral';
+                 if (q.difficulty === 'facil') diffClass = 'badge--success';
+                 else if (q.difficulty === 'mitjana') diffClass = 'badge--warning';
+                 else if (q.difficulty === 'dificil') diffClass = 'badge--danger';
+              %>
+              <span class="badge <%= diffClass %>"><%= q.difficulty || 'mitjana' %></span>
+            </td>
+            <td>
+              <span class="badge badge--success" style="font-weight: 700;">Opció <%= q.correct_option %></span>
+            </td>
+            <td style="text-align: right;">
+              <div style="display: inline-flex; gap: 0.4rem;">
+                <a href="/questions/<%= q.id %>/edit" class="btn btn--secondary btn--sm">
+                  Editar
+                </a>
+                <form action="/questions/<%= q.id %>/delete" method="POST" onsubmit="return confirm('Segur que vols eliminar aquesta pregunta del banc general?');" style="display: inline;">
+                  <button type="submit" class="btn btn--danger btn--sm">
+                    Esborrar
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      <% } %>
+    </tbody>
+  </table>
+</div>

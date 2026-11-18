@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= lesson.title %> - OposTest</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../organisms/header') %>
+
+  <main class="main-container">
+    <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+      <a href="/course/<%= lesson.course_id %>" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">
+        &larr; Tornar al temari del curs (<%= lesson.courses ? lesson.courses.title : 'Curs' %>)
+      </a>
+      <div style="display: flex; gap: 0.75rem; align-items: center;">
+        <form action="/lesson/<%= lesson.id %>/toggle" method="POST" style="display: inline;">
+          <button type="submit" class="btn <%= lesson.completed ? 'btn--success' : 'btn--secondary' %> btn--sm">
+            <%= lesson.completed ? '✓ Lliçó Completada' : 'Marcar com a Completada' %>
+          </button>
+        </form>
+        <a href="/lesson/<%= lesson.id %>/quiz" class="btn btn--primary btn--sm">
+          📝 Fer Test d'aquesta Lliçó (<%= questions.length %>)
+        </a>
+      </div>
+    </div>
+
+    <!-- Capçalera de la Lliçó -->
+    <div class="card" style="margin-bottom: 1.5rem;">
+      <div class="page-header" style="margin-bottom: 0.5rem;">
+        <h1 class="page-header__title"><%= lesson.title %></h1>
+        <div>
+          <% if (lesson.completed) { %>
+            <span class="badge badge--success" style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">Completada</span>
+          <% } else { %>
+            <span class="badge badge--neutral" style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">Pendent d'estudi</span>
+          <% } %>
+        </div>
+      </div>
+
+      <% if (lesson.video_url) { %>
+        <div style="margin-top: 1rem; padding: 0.75rem 1rem; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; display: flex; align-items: center; gap: 0.75rem;">
+          <span style="font-size: 1.25rem;">🎥</span>
+          <div>
+            <strong>Recurs Audiovisual:</strong>
+            <a href="<%= lesson.video_url %>" target="_blank" rel="noopener noreferrer" style="margin-left: 0.5rem; color: #2563eb; font-weight: 500;">
+              Obrir vídeo / classe en una pestanya nova &nearr;
+            </a>
+          </div>
+        </div>
+      <% } %>
+    </div>
+
+    <!-- Contingut Teòric en Markdown -->
+    <div class="card" style="margin-bottom: 1.5rem;">
+      <h2 style="font-size: 1.25rem; font-weight: 700; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.75rem; margin-bottom: 1.25rem;">
+        📖 Contingut Teòric
+      </h2>
+      <div class="markdown-content">
+        <% if (contentHtml && contentHtml.trim()) { %>
+          <%- contentHtml %>
+        <% } else { %>
+          <p style="color: #64748b; font-style: italic;">Aquesta lliçó encara no conté apunts teòrics.</p>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Bloc d'Apunts Personals -->
+    <%- include('../organisms/personal-notes', { lessonId: lesson.id, note }) %>
+
+    <!-- Gestió In Situ de Preguntes Associades (N:M) -->
+    <div class="card" style="margin-top: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <h2 style="font-size: 1.25rem; font-weight: 700; margin: 0; color: #0f172a;">
+            🎯 Preguntes Associades a aquesta Lliçó (<%= questions.length %>)
+          </h2>
+          <p style="color: #64748b; font-size: 0.85rem; margin-top: 0.25rem;">
+            Aquestes preguntes formaran el test d'aquesta lliçó i s'inclouran al test global del curs.
+          </p>
+        </div>
+        <div>
+          <a href="/questions/new?lesson_id=<%= lesson.id %>" class="btn btn--primary btn--sm">
+            + Nova Pregunta per a aquesta Lliçó
+          </a>
+        </div>
+      </div>
+
+      <!-- Quick Attach -->
+      <div style="background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+        <%- include('../molecules/quick-attach', { lessonId: lesson.id, availableQuestions }) %>
+      </div>
+
+      <!-- Llistat de preguntes vinculades -->
+      <% if (!questions || questions.length === 0) { %>
+        <p style="color: #64748b; text-align: center; padding: 1.5rem 0;">
+          No hi ha cap pregunta vinculada a aquesta lliçó. Pots utilitzar el selector superior per vincular-ne una o crear-ne una de nova.
+        </p>
+      <% } else { %>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <% questions.forEach((q, idx) => { %>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #ffffff;">
+              <div style="flex: 1; padding-right: 1rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                  <strong style="color: #2563eb;">#<%= q.id %></strong>
+                  <span style="font-weight: 600; color: #0f172a;"><%= q.question_text %></span>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center; font-size: 0.8rem; color: #64748b;">
+                  <span>Resposta: <strong><%= q.correct_option %></strong></span>
+                  <span>&bull;</span>
+                  <span>Dificultat: <%= q.difficulty %></span>
+                  <% if (q.otherLessonsCount > 0) { %>
+                    <span>&bull;</span>
+                    <span class="badge badge--primary" style="font-size: 0.7rem;">
+                      També present a <%= q.otherLessonsCount %> altra/es lliçó/ns
+                    </span>
+                  <% } %>
+                </div>
+              </div>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <a href="/questions/<%= q.id %>/edit" class="btn btn--secondary btn--sm">Editar</a>
+                <form action="/lesson/<%= lesson.id %>/questions/<%= q.id %>/detach" method="POST" onsubmit="return confirm('Vols desvincular aquesta pregunta de la lliçó actual? (La pregunta seguirà existint al banc general)');" style="display: inline;">
+                  <button type="submit" class="btn btn--danger btn--sm" title="Desvincula sense esborrar del banc">
+                    Desvincular
+                  </button>
+                </form>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+  </main>
+
+  <%- include('../organisms/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

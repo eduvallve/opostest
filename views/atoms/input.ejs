@@ -1,0 +1,17 @@
+<div class="form-group">
+  <% if (typeof label !== 'undefined') { %>
+    <label for="<%= id %>"><%= label %> <% if (typeof required !== 'undefined' && required) { %><span style="color: #dc2626;">*</span><% } %></label>
+  <% } %>
+  <input 
+    type="<%= typeof type !== 'undefined' ? type : 'text' %>" 
+    id="<%= id %>" 
+    name="<%= name %>" 
+    value="<%= typeof value !== 'undefined' ? value : '' %>" 
+    placeholder="<%= typeof placeholder !== 'undefined' ? placeholder : '' %>" 
+    class="input-text <%= typeof inputClass !== 'undefined' ? inputClass : '' %>"
+    <% if (typeof required !== 'undefined' && required) { %>required<% } %>
+  />
+  <% if (typeof hint !== 'undefined') { %>
+    <span class="form-hint"><%= hint %></span>
+  <% } %>
+</div>

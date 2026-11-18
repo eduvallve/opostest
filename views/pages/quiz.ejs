@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - OposTest</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../organisms/header') %>
+
+  <main class="main-container">
+    <div class="quiz-container">
+      <div style="margin-bottom: 1.5rem;">
+        <a href="<%= mode === 'lesson' ? '/lesson/' + targetId : '/course/' + targetId %>" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">
+          &larr; Sortir del simulacre
+        </a>
+      </div>
+
+      <div class="quiz-header">
+        <div>
+          <h1 style="font-size: 1.75rem; font-weight: 800; margin: 0; color: #0f172a;"><%= title %></h1>
+          <p style="color: #64748b; margin-top: 0.25rem;">Llegeix atentament cada enunciat i selecciona la resposta correcta.</p>
+        </div>
+        <div class="quiz-progress-text">
+          <span id="answered-counter">0</span> de <%= questions.length %> contestades
+        </div>
+      </div>
+
+      <% if (!questions || questions.length === 0) { %>
+        <div class="card" style="text-align: center; padding: 3rem;">
+          <p style="color: #64748b; font-size: 1.1rem; margin-bottom: 1.5rem;">
+            Aquest simulacre no conté cap pregunta vinculada.
+          </p>
+          <a href="<%= mode === 'lesson' ? '/lesson/' + targetId : '/course/' + targetId %>" class="btn btn--secondary">
+            Tornar
+          </a>
+        </div>
+      <% } else { %>
+        <form id="quiz-form" action="/quiz/submit" method="POST">
+          <input type="hidden" name="course_id" value="<%= courseId || '' %>" />
+          <input type="hidden" name="lesson_id" value="<%= lessonId || '' %>" />
+
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <% questions.forEach((q, index) => { %>
+              <div class="question-card" id="q-card-<%= q.id %>">
+                <div class="question-card__number">
+                  Pregunta <%= index + 1 %> de <%= questions.length %>
+                  <% if (q.difficulty) { %>
+                    <span style="font-size: 0.75rem; font-weight: normal; color: #64748b; margin-left: 0.5rem;">
+                      (Dificultat: <%= q.difficulty %>)
+                    </span>
+                  <% } %>
+                </div>
+
+                <div class="question-card__text">
+                  <%= q.question_text %>
+                </div>
+
+                <div class="question-card__options">
+                  <!-- Opció A -->
+                  <label class="option-label" for="q_<%= q.id %>_a">
+                    <input type="radio" id="q_<%= q.id %>_a" name="answers[<%= q.id %>]" value="A" class="quiz-radio" data-qid="<%= q.id %>" />
+                    <div>
+                      <strong>A)</strong> <%= q.option_a %>
+                    </div>
+                  </label>
+
+                  <!-- Opció B -->
+                  <label class="option-label" for="q_<%= q.id %>_b">
+                    <input type="radio" id="q_<%= q.id %>_b" name="answers[<%= q.id %>]" value="B" class="quiz-radio" data-qid="<%= q.id %>" />
+                    <div>
+                      <strong>B)</strong> <%= q.option_b %>
+                    </div>
+                  </label>
+
+                  <!-- Opció C -->
+                  <label class="option-label" for="q_<%= q.id %>_c">
+                    <input type="radio" id="q_<%= q.id %>_c" name="answers[<%= q.id %>]" value="C" class="quiz-radio" data-qid="<%= q.id %>" />
+                    <div>
+                      <strong>C)</strong> <%= q.option_c %>
+                    </div>
+                  </label>
+
+                  <!-- Opció D (si existeix) -->
+                  <% if (q.option_d && q.option_d.trim()) { %>
+                    <label class="option-label" for="q_<%= q.id %>_d">
+                      <input type="radio" id="q_<%= q.id %>_d" name="answers[<%= q.id %>]" value="D" class="quiz-radio" data-qid="<%= q.id %>" />
+                      <div>
+                        <strong>D)</strong> <%= q.option_d %>
+                      </div>
+                    </label>
+                  <% } %>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+
+          <div style="margin-top: 2rem; display: flex; justify-content: flex-end; gap: 1rem; position: sticky; bottom: 1rem; background-color: #ffffff; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+            <button type="submit" id="btn-submit-quiz" class="btn btn--success btn--lg" style="width: 100%;">
+              Finalitzar Simulacre i Obtenir Qualificació
+            </button>
+          </div>
+        </form>
+      <% } %>
+    </div>
+  </main>
+
+  <%- include('../organisms/footer') %>
+  <script src="/js/quiz.js"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= isEdit ? 'Editar Pregunta #' + question.id : 'Nova Pregunta Test' %> - OposTest</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../../organisms/header') %>
+
+  <main class="main-container">
+    <div style="margin-bottom: 1.5rem;">
+      <a href="/questions" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">&larr; Tornar al banc de preguntes</a>
+    </div>
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title"><%= isEdit ? 'Editar Pregunta #' + question.id : 'Nova Pregunta Test' %></h1>
+        <p class="page-header__subtitle">
+          Defineix l'enunciat, les opcions i assigna-la de manera àgil a una o múltiples lliçons (N:M).
+        </p>
+      </div>
+    </div>
+
+    <div class="card" style="max-width: 800px; margin: 0 auto;">
+      <form action="<%= isEdit ? '/questions/' + question.id : '/questions' %>" method="POST">
+        <!-- Enunciat -->
+        <div class="form-group">
+          <label for="q-text">Enunciat de la Pregunta <span style="color: #dc2626;">*</span></label>
+          <textarea id="q-text" name="question_text" class="input-textarea" placeholder="Escriu l'enunciat complet de la pregunta..." style="min-height: 90px;" required><%= isEdit ? question.question_text : '' %></textarea>
+        </div>
+
+        <!-- Opcions de Resposta -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label for="q-opt-a">Opció A <span style="color: #dc2626;">*</span></label>
+            <input type="text" id="q-opt-a" name="option_a" value="<%= isEdit ? question.option_a : '' %>" class="input-text" required />
+          </div>
+
+          <div class="form-group">
+            <label for="q-opt-b">Opció B <span style="color: #dc2626;">*</span></label>
+            <input type="text" id="q-opt-b" name="option_b" value="<%= isEdit ? question.option_b : '' %>" class="input-text" required />
+          </div>
+
+          <div class="form-group">
+            <label for="q-opt-c">Opció C <span style="color: #dc2626;">*</span></label>
+            <input type="text" id="q-opt-c" name="option_c" value="<%= isEdit ? question.option_c : '' %>" class="input-text" required />
+          </div>
+
+          <div class="form-group">
+            <label for="q-opt-d">Opció D (opcional)</label>
+            <input type="text" id="q-opt-d" name="option_d" value="<%= isEdit ? (question.option_d || '') : '' %>" class="input-text" placeholder="Deixa buit si el test és de 3 opcions" />
+          </div>
+        </div>
+
+        <!-- Opció Correcta i Dificultat -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+          <div class="form-group">
+            <label for="q-correct">Opció Correcta <span style="color: #dc2626;">*</span></label>
+            <select id="q-correct" name="correct_option" class="input-select" required>
+              <option value="A" <%= isEdit && question.correct_option === 'A' ? 'selected' : '' %>>Opció A</option>
+              <option value="B" <%= isEdit && question.correct_option === 'B' ? 'selected' : '' %>>Opció B</option>
+              <option value="C" <%= isEdit && question.correct_option === 'C' ? 'selected' : '' %>>Opció C</option>
+              <option value="D" <%= isEdit && question.correct_option === 'D' ? 'selected' : '' %>>Opció D</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="q-difficulty">Dificultat</label>
+            <select id="q-difficulty" name="difficulty" class="input-select">
+              <option value="facil" <%= isEdit && question.difficulty === 'facil' ? 'selected' : '' %>>Fàcil</option>
+              <option value="mitjana" <%= !isEdit || question.difficulty === 'mitjana' ? 'selected' : '' %>>Mitjana</option>
+              <option value="dificil" <%= isEdit && question.difficulty === 'dificil' ? 'selected' : '' %>>Difícil</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Justificació Legal / Explicació -->
+        <div class="form-group">
+          <label for="q-explanation">Justificació Legal o Explicació de la Resposta</label>
+          <textarea id="q-explanation" name="explanation" class="input-textarea" placeholder="Indica l'article de la llei, sentència o raonament jurídic..."><%= isEdit ? (question.explanation || '') : '' %></textarea>
+        </div>
+
+        <!-- Arbre Jeràrquic de Lliçons (N:M) -->
+        <%- include('../../organisms/hierarchy-tree', { courses, assignedLessonIds }) %>
+
+        <!-- Botons d'Acció -->
+        <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+          <a href="/questions" class="btn btn--secondary">
+            Cancel·lar
+          </a>
+          <button type="submit" class="btn btn--primary btn--lg">
+            <%= isEdit ? 'Desar Canvis' : 'Crear Pregunta' %>
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <%- include('../../organisms/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

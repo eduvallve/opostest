@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cursos i Oposicions - OposTest</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../organisms/header') %>
+
+  <main class="main-container">
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title">Cursos i Convocatòries</h1>
+        <p class="page-header__subtitle">Organitza els teus temaris, lliçons i bancs de preguntes transversals.</p>
+      </div>
+      <div>
+        <a href="/questions/new" class="btn btn--secondary">+ Nova Pregunta</a>
+      </div>
+    </div>
+
+    <!-- Targetes de Cursos -->
+    <div class="grid-cards">
+      <% if (!courses || courses.length === 0) { %>
+        <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+          <p style="color: #64748b; font-size: 1.1rem; margin-bottom: 1.5rem;">Encara no hi ha cap curs creat. Comença creant la teva primera convocatòria!</p>
+        </div>
+      <% } else { %>
+        <% courses.forEach(course => { %>
+          <%- include('../molecules/course-card', { course }) %>
+        <% }) %>
+      <% } %>
+    </div>
+
+    <!-- Formulari Crear Nou Curs -->
+    <div class="card" style="margin-top: 2.5rem; max-width: 650px;">
+      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: #0f172a;">
+        + Crear Nou Curs / Convocatòria
+      </h2>
+      <form action="/courses" method="POST">
+        <div class="form-group">
+          <label for="course-title">Nom de l'Oposició o Curs <span style="color: #dc2626;">*</span></label>
+          <input type="text" id="course-title" name="title" class="input-text" placeholder="Ex: Tècnic de Gestió de la Generalitat" required />
+        </div>
+        <div class="form-group">
+          <label for="course-desc">Descripció o Convocatòria</label>
+          <textarea id="course-desc" name="description" class="input-textarea" style="min-height: 80px;" placeholder="Ex: Temari general i específic per a la convocatòria 2026..."></textarea>
+        </div>
+        <button type="submit" class="btn btn--primary">
+          Crear Curs
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <%- include('../organisms/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

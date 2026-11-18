@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resultats del Simulacre - OposTest</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../organisms/header') %>
+
+  <main class="main-container">
+    <div class="quiz-container">
+      <div style="margin-bottom: 1.5rem;">
+        <a href="<%= attempt.lesson_id ? '/lesson/' + attempt.lesson_id : (attempt.course_id ? '/course/' + attempt.course_id : '/') %>" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">
+          &larr; Tornar al temari
+        </a>
+      </div>
+
+      <!-- Banner de Puntuació Global -->
+      <div class="quiz-summary-banner">
+        <span style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.9rem; opacity: 0.9;">
+          Qualificació Final del Simulacre
+        </span>
+        <div class="quiz-summary-banner__score">
+          <%= attempt.score %>%
+        </div>
+        <div class="quiz-summary-banner__details">
+          <span>✅ <strong><%= attempt.correct_answers %></strong> Encerts</span>
+          <span>❌ <strong><%= attempt.incorrect_answers %></strong> Errors</span>
+          <span>📊 <strong><%= attempt.total_questions %></strong> Preguntes totals</span>
+        </div>
+      </div>
+
+      <!-- Desglossament i Revisió de Respostes -->
+      <div class="page-header" style="margin-bottom: 1.5rem;">
+        <div>
+          <h2 class="page-header__title" style="font-size: 1.4rem;">Revisió Detallada de Preguntes</h2>
+          <p class="page-header__subtitle">Comprova els teus encerts, les respostes errònies i la justificació legal.</p>
+        </div>
+        <div>
+          <a href="<%= attempt.lesson_id ? '/lesson/' + attempt.lesson_id + '/quiz' : (attempt.course_id ? '/course/' + attempt.course_id + '/quiz' : '/') %>" class="btn btn--primary">
+            Repetir Simulacre
+          </a>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+        <% (answers || []).forEach((ans, index) => { %>
+          <% const q = ans.questions || {}; %>
+          <div class="review-answer-card <%= ans.is_correct ? 'review-answer-card--correct' : 'review-answer-card--incorrect' %>">
+            <div class="review-answer-card__status <%= ans.is_correct ? 'correct' : 'incorrect' %>">
+              <% if (ans.is_correct) { %>
+                <span>✓ Resposta Correcta (+1)</span>
+              <% } else { %>
+                <span>✗ Resposta Incorrecta</span>
+              <% } %>
+              <span style="color: #64748b; font-weight: normal; margin-left: auto;">
+                Pregunta <%= index + 1 %>
+              </span>
+            </div>
+
+            <div style="font-size: 1.1rem; font-weight: 600; color: #0f172a; margin-bottom: 1rem;">
+              <%= q.question_text || 'Enunciat no disponible' %>
+            </div>
+
+            <!-- Opcions amb marcatge d'estat -->
+            <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.95rem;">
+              <!-- Opció A -->
+              <div style="padding: 0.6rem 0.85rem; border-radius: 6px; border: 1px solid #e2e8f0; 
+                <%= q.correct_option === 'A' ? 'background-color: #f0fdf4; border-color: #86efac; font-weight: 600;' : '' %>
+                <%= ans.selected_option === 'A' && !ans.is_correct ? 'background-color: #fef2f2; border-color: #fca5a5; font-weight: 600;' : '' %>">
+                <strong>A)</strong> <%= q.option_a %>
+                <% if (q.correct_option === 'A') { %> <span style="color: #16a34a; margin-left: 0.5rem;">(Correcta)</span> <% } %>
+                <% if (ans.selected_option === 'A') { %> <span style="color: <%= ans.is_correct ? '#16a34a' : '#dc2626' %>; margin-left: 0.5rem;">— La teva selecció</span> <% } %>
+              </div>
+
+              <!-- Opció B -->
+              <div style="padding: 0.6rem 0.85rem; border-radius: 6px; border: 1px solid #e2e8f0; 
+                <%= q.correct_option === 'B' ? 'background-color: #f0fdf4; border-color: #86efac; font-weight: 600;' : '' %>
+                <%= ans.selected_option === 'B' && !ans.is_correct ? 'background-color: #fef2f2; border-color: #fca5a5; font-weight: 600;' : '' %>">
+                <strong>B)</strong> <%= q.option_b %>
+                <% if (q.correct_option === 'B') { %> <span style="color: #16a34a; margin-left: 0.5rem;">(Correcta)</span> <% } %>
+                <% if (ans.selected_option === 'B') { %> <span style="color: <%= ans.is_correct ? '#16a34a' : '#dc2626' %>; margin-left: 0.5rem;">— La teva selecció</span> <% } %>
+              </div>
+
+              <!-- Opció C -->
+              <div style="padding: 0.6rem 0.85rem; border-radius: 6px; border: 1px solid #e2e8f0; 
+                <%= q.correct_option === 'C' ? 'background-color: #f0fdf4; border-color: #86efac; font-weight: 600;' : '' %>
+                <%= ans.selected_option === 'C' && !ans.is_correct ? 'background-color: #fef2f2; border-color: #fca5a5; font-weight: 600;' : '' %>">
+                <strong>C)</strong> <%= q.option_c %>
+                <% if (q.correct_option === 'C') { %> <span style="color: #16a34a; margin-left: 0.5rem;">(Correcta)</span> <% } %>
+                <% if (ans.selected_option === 'C') { %> <span style="color: <%= ans.is_correct ? '#16a34a' : '#dc2626' %>; margin-left: 0.5rem;">— La teva selecció</span> <% } %>
+              </div>
+
+              <!-- Opció D -->
+              <% if (q.option_d) { %>
+                <div style="padding: 0.6rem 0.85rem; border-radius: 6px; border: 1px solid #e2e8f0; 
+                  <%= q.correct_option === 'D' ? 'background-color: #f0fdf4; border-color: #86efac; font-weight: 600;' : '' %>
+                  <%= ans.selected_option === 'D' && !ans.is_correct ? 'background-color: #fef2f2; border-color: #fca5a5; font-weight: 600;' : '' %>">
+                  <strong>D)</strong> <%= q.option_d %>
+                  <% if (q.correct_option === 'D') { %> <span style="color: #16a34a; margin-left: 0.5rem;">(Correcta)</span> <% } %>
+                  <% if (ans.selected_option === 'D') { %> <span style="color: <%= ans.is_correct ? '#16a34a' : '#dc2626' %>; margin-left: 0.5rem;">— La teva selecció</span> <% } %>
+                </div>
+              <% } %>
+            </div>
+
+            <!-- Justificació Legal / Explicació -->
+            <% if (q.explanation && q.explanation.trim()) { %>
+              <div class="explanation-box">
+                <strong>Justificació Legal / Explicació:</strong>
+                <p style="margin: 0.35rem 0 0 0;"><%= q.explanation %></p>
+              </div>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </main>
+
+  <%- include('../organisms/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

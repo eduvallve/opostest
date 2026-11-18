@@ -1,0 +1,22 @@
+<div class="personal-notes">
+  <div class="personal-notes__title">
+    <span>📝</span> Apunts Personals de la Lliçó
+  </div>
+  <form action="/lesson/<%= lessonId %>/notes" method="POST">
+    <div class="form-group" style="margin-bottom: 0.75rem;">
+      <label for="personal-note-textarea" class="sr-only" style="display: none;">Apunts personals</label>
+      <textarea 
+        id="personal-note-textarea" 
+        name="note_text" 
+        class="input-textarea" 
+        placeholder="Escriu aquí els teus esquemes, regles mnemotècniques o dubtes sobre aquesta lliçó..."
+        style="background-color: #fffef2; border-color: #fde047;"
+      ><%= note %></textarea>
+    </div>
+    <div style="display: flex; justify-content: flex-end;">
+      <button type="submit" class="btn btn--primary btn--sm">
+        Desar Apunts
+      </button>
+    </div>
+  </form>
+</div>

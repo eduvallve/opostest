@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= course.title %> - OposTest</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../organisms/header') %>
+
+  <main class="main-container">
+    <div style="margin-bottom: 1.5rem;">
+      <a href="/" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">&larr; Tornar a tots els cursos</a>
+    </div>
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-header__title"><%= course.title %></h1>
+        <p class="page-header__subtitle"><%= course.description || 'Sense descripció' %></p>
+      </div>
+      <div>
+        <a href="/course/<%= course.id %>/quiz" class="btn btn--primary btn--lg">
+          📝 Realitzar Simulacre Global
+        </a>
+      </div>
+    </div>
+
+    <!-- Barra de Progrés del Curs -->
+    <div class="card" style="margin-bottom: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <span style="font-weight: 600; color: #334155;">Progrés General del Curs</span>
+        <span style="font-weight: 700; color: #2563eb;"><%= course.completedLessons %> de <%= course.totalLessons %> lliçons completades (<%= course.progressPercent %>%)</span>
+      </div>
+      <div class="progress-bar-container" style="height: 12px;">
+        <div class="progress-bar-fill <%= course.progressPercent >= 100 ? 'progress-bar-fill--success' : '' %>" style="width: <%= course.progressPercent %>%;"></div>
+      </div>
+    </div>
+
+    <!-- Llista de Lliçons -->
+    <h2 class="section-title">Temari i Lliçons</h2>
+    <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 2.5rem;">
+      <% if (!course.lessons || course.lessons.length === 0) { %>
+        <div style="padding: 2.5rem; text-align: center; color: #64748b;">
+          Aquest curs encara no té lliçons. Afegeix el primer tema a continuació!
+        </div>
+      <% } else { %>
+        <ul style="list-style: none; margin: 0; padding: 0;">
+          <% course.lessons.forEach((lesson, index) => { %>
+            <li style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; border-bottom: 1px solid #e2e8f0; <%= lesson.completed ? 'background-color: #f8fafc;' : '' %>">
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <span style="font-weight: 700; color: #94a3b8; width: 24px;"><%= index + 1 %>.</span>
+                <div>
+                  <a href="/lesson/<%= lesson.id %>" style="font-size: 1.05rem; font-weight: 600; color: #0f172a; text-decoration: none;">
+                    <%= lesson.title %>
+                  </a>
+                  <% if (lesson.video_url) { %>
+                    <span style="margin-left: 0.5rem; font-size: 0.8rem; color: #dc2626;" title="Té recurs de vídeo">🎥 Vídeo</span>
+                  <% } %>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <% if (lesson.completed) { %>
+                  <span class="badge badge--success">✓ Completada</span>
+                <% } else { %>
+                  <span class="badge badge--neutral">Pendent</span>
+                <% } %>
+                <a href="/lesson/<%= lesson.id %>" class="btn btn--secondary btn--sm">Estudiar</a>
+                <a href="/lesson/<%= lesson.id %>/quiz" class="btn btn--primary btn--sm">Test</a>
+              </div>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </div>
+
+    <!-- Formulari Afegir Nova Lliçó -->
+    <div class="card" style="max-width: 700px;">
+      <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem;">+ Afegir Nova Lliçó al Temari</h3>
+      <form action="/course/<%= course.id %>/lessons" method="POST">
+        <div class="form-group">
+          <label for="lesson-title">Títol de la Lliçó / Tema <span style="color: #dc2626;">*</span></label>
+          <input type="text" id="lesson-title" name="title" class="input-text" placeholder="Ex: Tema 1: L'Estatut d'Autonomia de Catalunya" required />
+        </div>
+        <div class="form-group">
+          <label for="lesson-order">Número d'Ordre</label>
+          <input type="number" id="lesson-order" name="order_index" value="<%= (course.lessons ? course.lessons.length : 0) + 1 %>" class="input-text" style="max-width: 120px;" />
+        </div>
+        <div class="form-group">
+          <label for="lesson-video">Enllaç a Vídeo (opcional)</label>
+          <input type="url" id="lesson-video" name="video_url" class="input-text" placeholder="https://www.youtube.com/watch?v=..." />
+        </div>
+        <div class="form-group">
+          <label for="lesson-content">Contingut Teòric (Markdown admès)</label>
+          <textarea id="lesson-content" name="content" class="input-textarea" placeholder="Escriu aquí el temari en format Markdown (# Títols, **negreta**, llistes...)..." style="min-height: 140px;"></textarea>
+        </div>
+        <button type="submit" class="btn btn--primary">
+          Afegir Lliçó
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <%- include('../organisms/footer') %>
+  <script src="/js/main.js"></script>
+</body>
+</html>

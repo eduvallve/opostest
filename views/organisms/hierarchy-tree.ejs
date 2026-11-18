@@ -1,0 +1,54 @@
+<div class="form-group">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; flex-wrap: wrap; gap: 0.5rem;">
+    <label for="tree-filter-input" style="font-size: 0.9rem; font-weight: 600; color: #0f172a;">
+      Associar a Lliçons (Molts a Molts - N:M)
+    </label>
+    <div style="max-width: 250px; width: 100%;">
+      <input 
+        type="text" 
+        id="tree-filter-input" 
+        class="input-text" 
+        placeholder="Filtrar temari en viu..." 
+        style="padding: 0.35rem 0.65rem; font-size: 0.85rem;"
+      />
+    </div>
+  </div>
+
+  <div class="hierarchy-tree" id="lessons-hierarchy-tree">
+    <% if (!courses || courses.length === 0) { %>
+      <p style="color: #64748b; font-size: 0.9rem; margin: 0.5rem 0;">No hi ha cursos disponibles.</p>
+    <% } else { %>
+      <% courses.forEach(course => { %>
+        <div class="course-node" data-course-id="<%= course.id %>">
+          <div class="course-node__header">
+            <span>📚 <%= course.title %></span>
+            <div class="course-node__actions">
+              <button type="button" class="btn-select-all" data-course-id="<%= course.id %>">Tot</button>
+              <span>|</span>
+              <button type="button" class="btn-deselect-all" data-course-id="<%= course.id %>">Cap</button>
+            </div>
+          </div>
+          <ul class="course-node__lessons">
+            <% (course.lessons || []).forEach(lesson => { %>
+              <% const isChecked = (typeof assignedLessonIds !== 'undefined') && assignedLessonIds.includes(lesson.id); %>
+              <li class="lesson-item" data-lesson-title="<%= lesson.title.toLowerCase() %>">
+                <label style="display: flex; align-items: center; gap: 0.5rem; width: 100%; cursor: pointer; font-weight: normal; margin: 0;">
+                  <input 
+                    type="checkbox" 
+                    name="lesson_ids" 
+                    value="<%= lesson.id %>"
+                    class="course-lesson-checkbox"
+                    data-course-id="<%= course.id %>"
+                    <% if (isChecked) { %>checked<% } %>
+                  />
+                  <span><%= lesson.title %></span>
+                </label>
+              </li>
+            <% }) %>
+          </ul>
+        </div>
+      <% }) %>
+    <% } %>
+  </div>
+  <span class="form-hint">Una mateixa pregunta pot estar associada a múltiples lliçons de diferents cursos.</span>
+</div>

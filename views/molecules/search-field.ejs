@@ -1,0 +1,16 @@
+<div class="form-group" style="margin-bottom: 0;">
+  <% if (typeof label !== 'undefined') { %>
+    <label for="<%= id %>"><%= label %></label>
+  <% } %>
+  <div style="position: relative;">
+    <input 
+      type="text" 
+      id="<%= id %>" 
+      name="<%= typeof name !== 'undefined' ? name : 'search' %>" 
+      value="<%= typeof value !== 'undefined' ? value : '' %>" 
+      placeholder="<%= typeof placeholder !== 'undefined' ? placeholder : 'Cercar...' %>" 
+      class="input-text"
+      autocomplete="off"
+    />
+  </div>
+</div>
