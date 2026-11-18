@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs');
 const path = require('path');
 const { marked } = require('marked');
 const supabase = require('./db');
@@ -9,13 +10,21 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Configuració de fitxers estàtics
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/css', express.static(path.join(__dirname, 'public/css')));
-app.use('/js', express.static(path.join(__dirname, 'public/js')));
+// Configuració de camins estàtics resolts (compatibilitat local i serverless)
+const publicDir = fs.existsSync(path.join(process.cwd(), 'public'))
+  ? path.join(process.cwd(), 'public')
+  : path.join(__dirname, 'public');
 
-// Motor de plantilles EJS
-app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(publicDir));
+app.use('/css', express.static(path.join(publicDir, 'css')));
+app.use('/js', express.static(path.join(publicDir, 'js')));
+
+// Motor de plantilles EJS amb camins resolts
+const viewsDir = fs.existsSync(path.join(process.cwd(), 'views'))
+  ? path.join(process.cwd(), 'views')
+  : path.join(__dirname, 'views');
+
+app.set('views', viewsDir);
 app.set('view engine', 'ejs');
 
 // Funció auxiliar per desduplicar preguntes per ID
@@ -774,6 +783,26 @@ app.get('/quiz/attempts/:id', async (req, res) => {
     console.error('Error GET /quiz/attempts/:id:', err.message);
     res.status(500).send('Error carregant resultats: ' + err.message);
   }
+});
+
+// Middleware global de gestió d'errors
+app.use((err, req, res, next) => {
+  console.error('Error global d\'Express:', err);
+  if (res.headersSent) {
+    return next(err);
+  }
+  res.status(500).send(`
+    <!DOCTYPE html>
+    <html lang="ca">
+    <head><meta charset="UTF-8"><title>Error del Servidor</title></head>
+    <body style="font-family: system-ui, sans-serif; padding: 2rem; max-width: 800px; margin: 0 auto;">
+      <h1 style="color: #dc2626;">Error del Servidor</h1>
+      <p><strong>Missatge:</strong> ${err.message}</p>
+      <pre style="background: #f1f5f9; padding: 1rem; border-radius: 8px; overflow-x: auto;">${err.stack}</pre>
+      <a href="/" style="color: #2563eb;">&larr; Tornar a l'inici</a>
+    </body>
+    </html>
+  `);
 });
 
 // Exportar app i funcions auxiliars per a proves

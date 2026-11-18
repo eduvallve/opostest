@@ -209,3 +209,4 @@ seed().catch(err => {
   console.error('❌ Error en el seed:', err.message);
   process.exit(1);
 });
+

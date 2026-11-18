@@ -129,3 +129,4 @@ verifyPhase3().catch(err => {
   console.error('❌ Error en la verificació de Fase 3:', err.message);
   process.exit(1);
 });
+
