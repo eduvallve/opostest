@@ -160,9 +160,11 @@ A continuació es detalla el pla d'implementació fase a fase, garantint la cobe
    - Llançar el desplegament de producció.
 
 #### Verificacions obligatòries per part de l'agent (Fase 6):
-- [ ] **V6.1 - Comprovació d'estat Git:** Executar `git status` per verificar que l'arbre de treball està net i que cap fitxer sensible està tracked.
-- [ ] **V6.2 - Validació de camins serverless:** Verificar que totes les crides a `res.render` i lectures de fitxers utilitzen rutes resoltes (`path.join(__dirname, ...)` o `process.cwd()`) per garantir compatibilitat amb l'entorn d'execució Serverless de Vercel.
-- [ ] **V6.3 - Smoke test del desplegament en producció:** Executar peticions `curl -I https://<nom-projecte>.vercel.app` per verificar que:
+- [x] **V6.1 - Comprovació d'estat Git:** Executar `git status` per verificar que l'arbre de treball està net i que cap fitxer sensible està tracked.
+- [x] **V6.2 - Validació de camins serverless:** Verificar que totes les crides a `res.render` i lectures de fitxers utilitzen rutes resoltes (`path.join(__dirname, ...)` o `process.cwd()`) per garantir compatibilitat amb l'entorn d'execució Serverless de Vercel.
+- [x] **V6.3 - Smoke test del desplegament en producció:** Executar peticions `curl -I https://opostest.vercel.app` i verificar que:
   - La pàgina principal respon amb `200 OK`.
-  - Els fitxers estàtics (`/css/style.css` i `/js/main.js`) es lliuren amb `200 OK`.
-  - Les connexions a Supabase des de la funció serverless s'executen sense timeout ni errors 500.
+  - Els fitxers estàtics (`/css/style.css` i `/js/main.js`) es lliuren amb `200 OK` i els tipus MIME correctes.
+  - `/healthz` respon amb `200 OK`; Supabase està configurat i les rutes serverless `/var/task/views` i `/var/task/public` existeixen.
+
+**Desplegament completat:** 18 de novembre de 2026 mitjançant Vercel CLI al projecte `opostest`, accessible a <https://opostest.vercel.app>.
