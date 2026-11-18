@@ -66,7 +66,8 @@ A continuació es detalla el pla d'implementació fase a fase, garantint la cobe
    - Condicional per arrencar `app.listen(PORT)` únicament si s'executa en local (`NODE_ENV !== 'production'`).
 3. **Configuració de Vercel (`vercel.json`):**
    - Definició del build `@vercel/node` amb `includeFiles: ["views/**", "public/**"]`.
-   - Rutes estàtiques per `/css/(.*)` i `/js/(.*)` i catch-all cap a `/api/index.js`.
+   - Configuració mínima compatible amb local i Vercel: cap rewite/ruta estàtica separada és necessària per `/css` i `/js`; el catch-all recorre a `/api/index.js` i `express.static` continua servint els recursos.
+   - Rutes: un únic catch-all `/(.*) -> /api/index.js`.
 4. **Implementació de tots els controladors i rutes:**
    - **Cursos i lliçons (Secció 7.1):** `GET /`, `POST /courses`, `GET /course/:id`, `POST /course/:id/lessons`, `GET /lesson/:id`, `POST /lesson/:id/toggle`, `POST /lesson/:id/notes` (amb `marked` per al contingut teòric i upsert de notes).
    - **Preguntes i N:M àgil (Secció 7.2):** `GET /questions`, `GET /questions/new`, `POST /questions`, `GET /questions/:id/edit`, `POST /questions/:id`, `POST /questions/:id/delete`, `POST /lesson/:id/questions/attach`, `POST /lesson/:id/questions/:questionId/detach`.
