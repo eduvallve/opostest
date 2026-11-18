@@ -27,6 +27,21 @@ const viewsDir = fs.existsSync(path.join(process.cwd(), 'views'))
 app.set('views', viewsDir);
 app.set('view engine', 'ejs');
 
+// Health check / diagnòstic de desplegament
+app.get('/healthz', (req, res) => {
+  res.status(200).json({
+    ok: true,
+    env: process.env.NODE_ENV || 'development',
+    vercel: !!process.env.VERCEL,
+    supabaseUrl: process.env.SUPABASE_URL ? process.env.SUPABASE_URL.substring(0, 30) + '...' : 'NOT SET',
+    supabaseKey: (process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY) ? 'SET' : 'NOT SET',
+    viewsDir,
+    publicDir,
+    viewsDirExists: fs.existsSync(viewsDir),
+    publicDirExists: fs.existsSync(publicDir),
+  });
+});
+
 // Funció auxiliar per desduplicar preguntes per ID
 function deduplicateQuestions(records) {
   const map = new Map();
